@@ -1,5 +1,3 @@
-
-
 class TDMBService {
     _apiBase = "https://api.themoviedb.org"
     _apiKey = "api_key=4ba38e564bb248d0e396b7f6e91aa2fa"
@@ -24,7 +22,7 @@ class TDMBService {
         return this.getResourse(`${this._apiBase}/3/search/movie?${this._apiKey}&language=en-US&query=${searchString}&page=1&include_adult=false`)
     }
 
-    crewRequest = (movieId) => {
+    castRequest = (movieId) => {
         return this.getResourse(`${this._apiBase}/3/movie/${movieId}/credits?${this._apiKey}&language=en-US`)
     }
 }

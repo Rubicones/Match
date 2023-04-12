@@ -17,17 +17,26 @@ const SearchItem = (props) => {
         return "https://image.tmdb.org/t/p/original/" + props.posterPath
     }
 
-    const crewRequest = async (movieId) => {
+    const castRequest = async (movieId) => {
         let castMembers = []
         
-        await tDMBService.crewRequest(movieId).then(res => {
-            castMembers = res.cast.map(item => {
+        await tDMBService.castRequest(movieId).then(res => {
+            props.switchState == 1 ? 
+            (castMembers = res.cast.map(item => {
                 let portrait = "https://www.pngfind.com/pngs/m/2-24590_question-mark-clipart-unknown-female-silhouette-question-mark.png    "  
                 if (item.profile_path != null)
                     portrait = "https://image.tmdb.org/t/p/original" + item.profile_path              
                 return {name: item.name, character: item.character, portraitUrl: portrait}
-            })
+            })) :
+            (castMembers = res.crew.map(item => {
+                let portrait = "https://www.pngfind.com/pngs/m/2-24590_question-mark-clipart-unknown-female-silhouette-question-mark.png    "  
+                if (item.profile_path != null)
+                    portrait = "https://image.tmdb.org/t/p/original" + item.profile_path              
+                return {name: item.name, character: item.job, portraitUrl: portrait}
+            }))
+
         })
+
 
         return castMembers
     }
@@ -35,7 +44,7 @@ const SearchItem = (props) => {
     return (
         <li onMouseDown={(e) => {
             e.preventDefault()
-            props.setMovie(posterUrl(), props.movieTitle, crewRequest(props.movieId))
+            props.setMovie(posterUrl(), props.movieTitle, castRequest(props.movieId))
         }}> 
             {props.item} 
         </li>
@@ -69,7 +78,6 @@ class Movie extends Component {
         }, () => {
             if (!this.state.isMovieSelected){
                 this.setState({isMovieSelected: true})
-                this.props.onMovieSelect()
             }
         })
     }
@@ -87,6 +95,7 @@ class Movie extends Component {
                     posterPath={item.poster_path} 
                     movieTitle={item.original_title}
                     movieId={item.id}
+                    switchState={this.props.switchState}
                     setMovie={(posterUrl, movieTitle, crewList) => {
                         this.setMovie(posterUrl, movieTitle)
                         this.props.setActors(crewList)
@@ -116,7 +125,7 @@ class Movie extends Component {
         const setPosterStyle = {
             backgroundImage: posterPath,
         }
-
+        
         return (
             <div className="movieWrapper">
                 <div className="movieContainer">
